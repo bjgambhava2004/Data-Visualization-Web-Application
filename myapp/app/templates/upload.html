@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload CSV</title>
+</head>
+<body>
+    <h1>This is the Django form</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="csv">Upload a CSV file:</label>
+        <input type="file" name="csv" id="csv" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if total_sales is not none and not total_sales.empty %}
+        <h2>Total Sales per Product:</h2>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Total Amount</th>
+                    <th>Total Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in total_sales.iterrows %}
+                    <tr>
+                        <td>{{ row.product }}</td>
+                        <td>{{ row.amount }}</td>
+                        <td>
+                            {% for qty_row in total_quantity.iterrows %}
+                                {% if qty_row.1.product == row.product %}
+                                    {{ qty_row.1.quantity }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% elif total_sales is not none %}
+        <p>No sales data to display.</p>
+    {% endif %}
+
+    {% if average_sales_per_day is not none %}
+        <h2>Average Sales per Day:</h2>
+        <p>{{ average_sales_per_day }}</p>
+        <p><a href="{% url 'sales_chart' %}">view Visualizations</a>
+        </p>
+    {% endif %}
+
+</body>
+</html>
+

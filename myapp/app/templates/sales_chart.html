@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Sales Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #salesChart, #lineChart {
+            max-width: 700px;
+            margin: 10px auto;  /* Center the canvases */
+        }
+    </style>
+</head>
+<body>
+    <h1>Total Sales Amount per Product</h1>
+
+    <canvas id="salesChart" width="500" height="300"></canvas>  <!-- Bar chart -->
+    <script>
+        const ctxBar = document.getElementById('salesChart').getContext('2d');
+
+        const salesChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels|safe }},
+                datasets: [{
+                    label: 'Total Sales Amount',
+                    data: {{ chart_data|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <h1>Daily Average Sales Trend</h1>
+    <form method="GET" action="{% url 'sales_chart' %}">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <button type="submit">View Sales</button>
+    </form>
+    
+    <canvas id="lineChart" width="500" height="300"></canvas>  <!-- Line chart -->
+    <script>
+        const ctxLine = document.getElementById('lineChart').getContext('2d');
+
+        const lineChart = new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: {{ line_chart_labels|safe }},
+                datasets: [{
+                    label: 'Daily Average Sales',
+                    data: {{ line_chart_data|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <br>
+    <a href="{% url 'upload_csv' %}">Upload another CSV</a>
+</body>
+</html>
